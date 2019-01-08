@@ -7,7 +7,7 @@ namespace StringKata
 {
     public class StringKata
     {
-        public static int Add(string input)
+        public int Add(string input)
         {
             int result = 0;
 
@@ -18,22 +18,35 @@ namespace StringKata
 
             if (input.StartsWith("//"))
             {
+                // Find the end of the delimiter section
                 var firstNewLine = input.IndexOf("\n", StringComparison.Ordinal);
 
+                // Starting just after "//" up to the end of the delimiter section "\n" will be the delimiter string length
                 var delimiterStringLength = firstNewLine - 2;
+
+                // After isolating that part of the string, ensure that the known, fixed format is manipulated such that we can split the numbers correctly
                 var delimiterString = input.Substring(2, delimiterStringLength);
+
+                // Remove unnecessary separator
                 delimiterString = delimiterString.Replace("[", "");
+
+                // Split delimiter string using remaining separator
                 var delimiters = Regex.Split(delimiterString, "]");
+
+                // Ensure there are no empty values in the delimiters array
                 delimiters = delimiters.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+
+                // If only one delimiter
                 if (delimiters.Length == 1)
                 {
+                    // If the initial format is used
                     var delimiter = input[2];
 
+                    // If the new format is used and the old format is not used with the delimiter being "["
                     if (input[2] == '[' && input[3] != '\n')
-                    {
                         delimiter = input[3];
-                    }
 
+                    // Isolate the number section of the string
                     var numberString = input.Substring(firstNewLine + 1);
 
                     inputArray = numberString.Split(delimiter).Select(int.Parse).ToList();
