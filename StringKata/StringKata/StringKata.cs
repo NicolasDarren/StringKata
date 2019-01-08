@@ -37,7 +37,7 @@ namespace StringKata
                 delimiters = delimiters.Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
                 // If only one delimiter
-                if (delimiters.Length == 1)
+                if (delimiters.Length == 1 && delimiters[0].Length == 1)
                 {
                     // If the initial format is used
                     var delimiter = input[2];
@@ -56,7 +56,7 @@ namespace StringKata
                     var numberString = input.Substring(firstNewLine + 1);
 
                     foreach (var delimiter in delimiters)
-                        numberString.Replace(delimiter, ",");
+                        numberString = numberString.Replace(delimiter, ",");
 
                     inputArray = Regex.Split(numberString, ",").Select(int.Parse).ToList();
                 }
