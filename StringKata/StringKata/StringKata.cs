@@ -7,51 +7,76 @@ namespace StringKata
 {
     public class StringKata
     {
+        private string[] delimiter;
 
         public int Add(string input)
         {
-            var sum = 0;
             if (string.IsNullOrWhiteSpace(input))
-                return sum;
+                return 0;
 
-            var defaultDelimiters = new[] { ",", "\n" };
-            string[] delimiters = defaultDelimiters;
-            string numberString = input;
+            delimiter = new[]{",", "\n"};
+            var numberString = input;
 
             if (input.StartsWith("//"))
-            { 
-                delimiters = GetDelimiters(input, out numberString);
+            {
+                delimiter = GetDelimiter(input);
+
+                numberString = GetNumberString(input);
             }
 
-            var numberList = numberString
-                .Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
-                .Select(n => int.Parse(n))
-                .ToList();
-
-            var negativeNumbers = numberList.Where(x => x < 0).ToList();
-            if (negativeNumbers.Count > 0)
-                throw new Exception($"Negative values are NOT allowed. Please remove the following value(s): {string.Join("; ", negativeNumbers)}");
-
-            numberList = numberList.Where(x => x < 1000).ToList();
-
-            sum = numberList.Sum();
+            var numberList = GetNumberList(numberString, delimiter);
+            var sum = numberList.Sum();
 
             return sum;
         }
 
-        private string[] GetDelimiters(string input, out string numberString)
+        private string GetNumberString(string input)
         {
             var newLinePosition = input.IndexOf('\n');
-            numberString = input.Substring(newLinePosition + 1);
 
-            var delimiterSectionLength = newLinePosition - 2;
-            var delimiterSection = input.Substring(2, delimiterSectionLength)
+            // Next line will be start of number string
+            return input.Substring(newLinePosition + 1);
+        }
+
+        private string[] GetDelimiter(string input)
+        {
+            var newLinePosition = input.IndexOf('\n');
+            var lengthOfFirstTwoCharacters = 2;
+            var delimiterSectionLength = newLinePosition - lengthOfFirstTwoCharacters;
+            
+            // Create comma separated delimiter section string
+            var delimiterSection = input.Substring(lengthOfFirstTwoCharacters, delimiterSectionLength)
                 .Replace("[", "")
                 .Replace(']', ',');
 
-            var delimiters = delimiterSection.Split(',');
+            var delimiters = delimiterSection.Split(new []{','}, StringSplitOptions.RemoveEmptyEntries);
 
             return delimiters;
+        }
+
+        private static List<int> GetNumberList(string input, string[] delimiters)
+        {
+            var numberList = input.Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
+                .Select(int.Parse)
+                .ToList();
+
+            CheckForNegativeNumbers(numberList);
+
+            numberList = IgnoreNumbersGreaterThanOneThousand(numberList);
+
+            return numberList;
+        }
+
+        private static List<int> IgnoreNumbersGreaterThanOneThousand(List<int> numberList)
+        {
+            return numberList.Where(x => x < 1000).ToList();
+        }
+
+        private static void CheckForNegativeNumbers(List<int> input)
+        {
+            var negativeNumbers = input.Where(n => n < 0).ToList();
+            if(negativeNumbers.Count > 0)
+                throw new Exception($"Negative numbers NOT allowed ({string.Join("; ", negativeNumbers)})");
         }
     }
 }

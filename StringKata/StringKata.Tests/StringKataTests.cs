@@ -22,7 +22,7 @@ namespace StringKata.Tests
         }
 
         [Test]
-        public void Add_WhenOneValue_ReturnsInputValue()
+        public void Add_WhenOneValue_ReturnsValue()
         {
             var input = "1";
 
@@ -42,23 +42,23 @@ namespace StringKata.Tests
         }
 
         [Test]
-        public void Add_WhenVaryingNumberOfValues_ReturnsSum()
+        public void Add_WhenNewLineDelimiter_ReturnsSum()
         {
-            var input = "1,2,3,4,5,15,20";
+            var input = "1\n2";
 
             var actualResult = GetStringKata().Add(input);
 
-            Assert.AreEqual(50, actualResult);
+            Assert.AreEqual(3, actualResult);
         }
 
         [Test]
-        public void Add_WhenNewLineDelimiter_ReturnsSum()
+        public void Add_WhenNegativeNumbers_ReturnsSum()
         {
-            var input = "1\n2,3";
+            var input = "1,-2";
 
-            var actualResult = GetStringKata().Add(input);
+            var exception = Assert.Throws<Exception>(() => GetStringKata().Add(input));
 
-            Assert.AreEqual(6, actualResult);
+            Assert.AreEqual(exception.Message, "Negative numbers NOT allowed (-2)");
         }
 
         [Test]
@@ -72,17 +72,7 @@ namespace StringKata.Tests
         }
 
         [Test]
-        public void Add_WhenNegativeValues_ThrowsException()
-        {
-            var input = "1,2,-3";
-
-            var exception = Assert.Throws<Exception>(() => GetStringKata().Add(input));
-
-            Assert.AreEqual(exception.Message, "Negative values are NOT allowed. Please remove the following value(s): -3");
-        }
-
-        [Test]
-        public void Add_WhenValueGreaterThanOneThousand_IgnoreValueAndReturnSum()
+        public void Add_WhenValueGreaterThanOneThousand_IgnoreValueAndReturnsSum()
         {
             var input = "1,2,3000";
 
@@ -104,7 +94,7 @@ namespace StringKata.Tests
         [Test]
         public void Add_WhenMultipleCustomDelimiterVaryingLength_ReturnsSum()
         {
-            var input = "//[**][||]\n1||2**3";
+            var input = "//[**]\n1**2**3";
 
             var actualResult = GetStringKata().Add(input);
 
