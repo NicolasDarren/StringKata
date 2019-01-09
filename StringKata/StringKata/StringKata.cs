@@ -7,21 +7,26 @@ namespace StringKata
 {
     public class StringKata
     {
+
         public int Add(string input)
         {
             var sum = 0;
             if (string.IsNullOrWhiteSpace(input))
                 return sum;
 
-            string[] defaultDelimiters = {",", "\n"};
+            var defaultDelimiters = new[] { ",", "\n" };
             string[] delimiters = defaultDelimiters;
             string numberString = input;
 
             if (input.StartsWith("//"))
-                delimiters = GetDelimiters(input, defaultDelimiters, out numberString);
+            { 
+                delimiters = GetDelimiters(input, out numberString);
+            }
 
-            var numberStringList = numberString.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-            var numberList = numberStringList.Select(x => Convert.ToInt32(x)).ToList();
+            var numberList = numberString
+                .Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
+                .Select(n => int.Parse(n))
+                .ToList();
 
             var negativeNumbers = numberList.Where(x => x < 0).ToList();
             if (negativeNumbers.Count > 0)
@@ -34,7 +39,7 @@ namespace StringKata
             return sum;
         }
 
-        private string[] GetDelimiters(string input, string[] defaultDelimiters, out string numberString)
+        private string[] GetDelimiters(string input, out string numberString)
         {
             var newLinePosition = input.IndexOf('\n');
             numberString = input.Substring(newLinePosition + 1);
@@ -44,7 +49,7 @@ namespace StringKata
                 .Replace("[", "")
                 .Replace(']', ',');
 
-            var delimiters = delimiterSection.Split(defaultDelimiters, StringSplitOptions.RemoveEmptyEntries);
+            var delimiters = delimiterSection.Split(',');
 
             return delimiters;
         }
