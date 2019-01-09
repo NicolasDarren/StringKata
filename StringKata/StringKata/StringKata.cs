@@ -14,8 +14,8 @@ namespace StringKata
                 return sum;
 
             string[] defaultDelimiters = {",", "\n"};
-            string numberString = input;
             string[] delimiters = defaultDelimiters;
+            string numberString = input;
 
             if (input.StartsWith("//"))
                 delimiters = GetDelimiters(input, defaultDelimiters, out numberString);
@@ -25,7 +25,7 @@ namespace StringKata
 
             var negativeNumbers = numberList.Where(x => x < 0).ToList();
             if (negativeNumbers.Count > 0)
-                throw new Exception($"Negative values are not allowed. Please change the following values: {string.Join("; ", negativeNumbers)}");
+                throw new Exception($"Negative values are NOT allowed. Please remove the following value(s): {string.Join("; ", negativeNumbers)}");
 
             numberList = numberList.Where(x => x < 1000).ToList();
 
@@ -36,14 +36,15 @@ namespace StringKata
 
         private string[] GetDelimiters(string input, string[] defaultDelimiters, out string numberString)
         {
-            var endOfDelimiterSectionPosition = input.IndexOf('\n');
-            var delimiterSectionLength = endOfDelimiterSectionPosition - 2;
+            var newLinePosition = input.IndexOf('\n');
+            numberString = input.Substring(newLinePosition + 1);
+
+            var delimiterSectionLength = newLinePosition - 2;
             var delimiterSection = input.Substring(2, delimiterSectionLength)
                 .Replace("[", "")
                 .Replace(']', ',');
-            var delimiters = delimiterSection.Split(defaultDelimiters, StringSplitOptions.RemoveEmptyEntries);
 
-            numberString = input.Substring(endOfDelimiterSectionPosition + 1);
+            var delimiters = delimiterSection.Split(defaultDelimiters, StringSplitOptions.RemoveEmptyEntries);
 
             return delimiters;
         }
