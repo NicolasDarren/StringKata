@@ -22,7 +22,7 @@ namespace StringKata.Tests
         }
 
         [Test]
-        public void Add_WhenOneValue_ReturnsInputValue()
+        public void Add_WhenOneValue_ReturnsValue()
         {
             var input = "1";
 
@@ -54,11 +54,11 @@ namespace StringKata.Tests
         [Test]
         public void Add_WhenNewLineDelimiter_ReturnsSum()
         {
-            var input = "1\n2,3";
+            var input = "1,2\n3,4,5";
 
             var actualResult = GetStringKata().Add(input);
 
-            Assert.AreEqual(6, actualResult);
+            Assert.AreEqual(15, actualResult);
         }
 
         [Test]
@@ -72,23 +72,23 @@ namespace StringKata.Tests
         }
 
         [Test]
-        public void Add_WhenNegativeValue_ThrowsError()
+        public void Add_WhenNegative_ThrowError()
         {
-            var input = "1,-2,-3,4";
+            var input = "1,-2,-3";
 
             var exception = Assert.Throws<Exception>(() => GetStringKata().Add(input));
 
-            Assert.AreEqual(exception.Message, "Negative values NOT allowed. (-2,-3)");
+            Assert.AreEqual(exception.Message, "Negative values not allowed. (-2,-3)");
         }
 
         [Test]
-        public void Add_WhenValueGreaterThanOneThousand_IgnoreValueGreaterThanOneThousandAndReturnsSum()
+        public void Add_WhenValueGreaterThanThousand_IgnoresValueGreaterThanThousandAndReturnsSum()
         {
-            var input = "1,2000,3";
+            var input = "1,2\n3,4,5000";
 
             var actualResult = GetStringKata().Add(input);
 
-            Assert.AreEqual(4, actualResult);
+            Assert.AreEqual(10, actualResult);
         }
 
         [Test]

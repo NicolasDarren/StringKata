@@ -12,20 +12,50 @@ namespace StringKata
             if (string.IsNullOrWhiteSpace(input))
                 return 0;
 
-            var delimiters = GetDelimiters(input);
+            var delimiters = GetDelimiter(input);
 
             var numberList = GetNumberList(input, delimiters);
-
+                
             var sum = numberList.Sum();
 
             return sum;
         }
 
-        private string[] GetDelimiters(string input)
+        private List<int> GetNumberList(string input, string[] delimiters)
         {
-            var delimiters = new[] { ",", "\n" };
+            var numberString = input;
 
-            if (input.StartsWith("//"))
+            if (HasCustomDelimiter(input))
+                numberString = input.Split('\n')[1];
+
+            var numberList = numberString
+                .Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse)
+                .ToList();
+
+            ThrowErrorIfAnyNegativeValues(numberList);
+
+            numberList = RemoveValuesGreaterThanThousand(numberList);
+
+            return numberList;
+        }
+
+        private List<int> RemoveValuesGreaterThanThousand(List<int> numberList)
+        {
+            return numberList.Where(x => x < 1000).ToList();
+        }
+
+        private void ThrowErrorIfAnyNegativeValues(List<int> numberList)
+        {
+            var negativeValues = numberList.Where(x => x < 0).ToList();
+
+            if (negativeValues.Count > 0)
+                throw new Exception($"Negative values not allowed. ({string.Join(",", negativeValues)})");
+        }
+
+        private string[] GetDelimiter(string input)
+        {
+            var delimiters = new[] {",", "\n"};
+            if (HasCustomDelimiter(input))
                 delimiters = GetCustomDelimiters(input);
 
             return delimiters;
@@ -33,58 +63,17 @@ namespace StringKata
 
         private string[] GetCustomDelimiters(string input)
         {
-            var newLinePosition = input.IndexOf('\n');
+            var delimiterString = input.Split('\n').FirstOrDefault();
             var customDelimiterIndicatorLength = 2;
-            var customDelimiterStringLength = newLinePosition - customDelimiterIndicatorLength;
-            var delimiterSection = input.Substring(customDelimiterIndicatorLength, customDelimiterStringLength);
-            var delimiters = GetDelimitersList(delimiterSection);
+            var commaSeparatedDelimiters = delimiterString.Substring(customDelimiterIndicatorLength)
+                .Replace("[", "");
 
-            return delimiters;
+            return commaSeparatedDelimiters.Split(']');
         }
 
-        private string[] GetDelimitersList(string delimiterSection)
+        private bool HasCustomDelimiter(string input)
         {
-            var commaSeparatedDelimitersString = delimiterSection.Replace("[", "")
-                .Replace(']', ',');
-
-            var delimiters = commaSeparatedDelimitersString.Split(',');
-
-            return delimiters;
-        }
-
-        private List<int> GetNumberList(string input, string[] delimiters)
-        {
-            var numberStringArray = GetNumberStringArray(input, delimiters);
-
-            var numberList = numberStringArray.Select(int.Parse).ToList();
-
-            ThrowErrorIfAnyNegativeNumbers(numberList);
-
-            numberList = numberList.Where(x => x < 1000).ToList();
-
-            return numberList;
-        }
-
-        private void ThrowErrorIfAnyNegativeNumbers(List<int> numberList)
-        {
-            var negativeNumbers = numberList.Where(x => x < 0).ToList();
-
-            if (negativeNumbers.Count > 0)
-                throw new Exception($"Negative values NOT allowed. ({string.Join(",", negativeNumbers)})");
-        }
-
-        private static string[] GetNumberStringArray(string input, string[] delimiters)
-        {
-            var numberString = input;
-            if (input.StartsWith("//"))
-            {
-                var newLinePosition = input.IndexOf('\n');
-                // Begins after New Line character
-                numberString = input.Substring(newLinePosition + 1);
-            }
-
-            var numberStringArray = numberString.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-            return numberStringArray;
+            return input.StartsWith("//");
         }
     }
 }
