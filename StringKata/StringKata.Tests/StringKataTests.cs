@@ -22,7 +22,7 @@ namespace StringKata.Tests
         }
 
         [Test]
-        public void Add_WhenOneValue_ReturnsValue()
+        public void Add_WhenOneValue_ReturnsInputValue()
         {
             var input = "1";
 
@@ -42,23 +42,23 @@ namespace StringKata.Tests
         }
 
         [Test]
-        public void Add_WhenNewLineDelimiter_ReturnsSum()
+        public void Add_WhenMultipleValues_ReturnsSum()
         {
-            var input = "1\n2";
+            var input = "1,2,3,4,5";
 
             var actualResult = GetStringKata().Add(input);
 
-            Assert.AreEqual(3, actualResult);
+            Assert.AreEqual(15, actualResult);
         }
 
         [Test]
-        public void Add_WhenNegativeNumbers_ReturnsSum()
+        public void Add_WhenNewLineDelimiter_ReturnsSum()
         {
-            var input = "1,-2";
+            var input = "1\n2,3";
 
-            var exception = Assert.Throws<Exception>(() => GetStringKata().Add(input));
+            var actualResult = GetStringKata().Add(input);
 
-            Assert.AreEqual(exception.Message, "Negative numbers NOT allowed (-2)");
+            Assert.AreEqual(6, actualResult);
         }
 
         [Test]
@@ -72,13 +72,23 @@ namespace StringKata.Tests
         }
 
         [Test]
-        public void Add_WhenValueGreaterThanOneThousand_IgnoreValueAndReturnsSum()
+        public void Add_WhenNegativeValue_ThrowsError()
         {
-            var input = "1,2,3000";
+            var input = "1,-2,-3,4";
+
+            var exception = Assert.Throws<Exception>(() => GetStringKata().Add(input));
+
+            Assert.AreEqual(exception.Message, "Negative values NOT allowed. (-2,-3)");
+        }
+
+        [Test]
+        public void Add_WhenValueGreaterThanOneThousand_IgnoreValueGreaterThanOneThousandAndReturnsSum()
+        {
+            var input = "1,2000,3";
 
             var actualResult = GetStringKata().Add(input);
 
-            Assert.AreEqual(3, actualResult);
+            Assert.AreEqual(4, actualResult);
         }
 
         [Test]
@@ -94,7 +104,7 @@ namespace StringKata.Tests
         [Test]
         public void Add_WhenMultipleCustomDelimiterVaryingLength_ReturnsSum()
         {
-            var input = "//[**]\n1**2**3";
+            var input = "//[**][||]\n1||2**3";
 
             var actualResult = GetStringKata().Add(input);
 
