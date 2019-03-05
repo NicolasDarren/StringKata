@@ -7,62 +7,73 @@ namespace StringKata.Tests
     public class StringKataTests
     {
         [Test]
-        public void Add_EmptyStringPassed_ReturnsZero()
+        public void Add_NoStringPassed_ReturnsZero()
         {
-            var numberString = "";
+            var input = "";
             var expectedResult = 0;
 
-            var actualResult = GetStringKata().Add(numberString);
+            var actualResult = GetStringKata().Add(input);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
 
         [Test]
-        public void Add_OneNumberPassed_ReturnsInput()
+        public void Add_OneNumberPassed_ReturnsNumber()
         {
-            var numberString = "1";
+            var input = "1";
             var expectedResult = 1;
 
-            var actualResult = GetStringKata().Add(numberString);
+            var actualResult = GetStringKata().Add(input);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
 
         [Test]
-        public void Add_NumbersPassed_ReturnsSum()
+        public void Add_TwoNumbersPassed_ReturnsSum()
         {
-            var numberString = "1,2";
+            var input = "1,2";
             var expectedResult = 3;
 
-            var actualResult = GetStringKata().Add(numberString);
+            var actualResult = GetStringKata().Add(input);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
 
         [Test]
-        public void Add_NewLineDelimiter_ReturnsSum()
+        public void Add_MultipleNumbersPassed_ReturnsSum()
         {
-            var numberString = "1,2\n3";
-            var expectedResult = 6;
+            var input = "1,2,5,12";
+            var expectedResult = 20;
 
-            var actualResult = GetStringKata().Add(numberString);
+            var actualResult = GetStringKata().Add(input);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
 
         [Test]
-        public void Add_CustomDelimitersUsed_ReturnsSum()
+        public void Add_NewLineDelimiterUsed_ReturnsSum()
         {
-            var numberString = "//;\n1;2";
-            var expectedResult = 3;
+            var input = "1\n2,5";
+            var expectedResult = 8;
 
-            var actualResult = GetStringKata().Add(numberString);
+            var actualResult = GetStringKata().Add(input);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
 
         [Test]
-        public void Add_NegativeNumberPassed_ThrowsException()
+        public void Add_CustomDelimiterUsed_ReturnsSum()
+        {
+            var input = "//;\n1;2;5";
+            var expectedResult = 8;
+
+            var actualResult = GetStringKata().Add(input);
+
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [Test]
+        public void Add_NegativeNumbersPassed_ThrowsException()
         {
             var input = "1,2,-3";
 
@@ -72,34 +83,23 @@ namespace StringKata.Tests
         }
 
         [Test]
-        public void Add_NumbersGreaterThanThousandPassed_NumbersGreaterThanThousandIgnoredAndReturnsSum()
+        public void Add_CustomDelimiterVaryingLengthUsed_ReturnsSum()
         {
-            var numberString = "1,2,3000";
-            var expectedResult = 3;
+            var input = "//**\n1**2**5";
+            var expectedResult = 8;
 
-            var actualResult = GetStringKata().Add(numberString);
+            var actualResult = GetStringKata().Add(input);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
 
         [Test]
-        public void Add_CustomDelimitersVaryingLength_ReturnsSum()
+        public void Add_MultipleCustomDelimiterVaryingLengthUsed_ReturnsSum()
         {
-            var numberString = "//[***]\n1***2***3";
-            var expectedResult = 6;
+            var input = "//[**][|||]\n1|||2**5";
+            var expectedResult = 8;
 
-            var actualResult = GetStringKata().Add(numberString);
-
-            Assert.AreEqual(expectedResult, actualResult);
-        }
-
-        [Test]
-        public void Add_MultipleCustomDelimitersVaryingLength_ReturnsSum()
-        {
-            var numberString = "//[***][||]\n1***2||3";
-            var expectedResult = 6;
-
-            var actualResult = GetStringKata().Add(numberString);
+            var actualResult = GetStringKata().Add(input);
 
             Assert.AreEqual(expectedResult, actualResult);
         }

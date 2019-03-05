@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace StringKata
 {
     public class StringKata
     {
-        public int Add(string numberString)
+        public int Add(string input)
         {
-            if (string.IsNullOrWhiteSpace(numberString))
+            if (string.IsNullOrWhiteSpace(input))
                 return 0;
+            var delimiters = GetDelimiters(input);
+            var numberString = GetNumberString(input);
             
-            var delimiters = GetDelimiters(numberString);
-
-            numberString = GetNumberString(numberString);
-
             var numberList = GetNumberList(numberString, delimiters);
-
-            HandleNegativeNumbers(numberList);
 
             return numberList.Sum();
         }
@@ -26,40 +23,32 @@ namespace StringKata
         {
             var numberList = numberString.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
 
-            numberList = numberList.Where(x => x < 1000).ToList();
+            numberList = numberList.Where(number => number < 1000).ToList();
+
+            var negativeNumbers = numberList.Where(number => number < 0).ToList();
+
+            if (negativeNumbers.Any())
+                throw new Exception("Negatives not allowed: " + string.Join(", ", negativeNumbers));
 
             return numberList;
         }
 
-        private void HandleNegativeNumbers(List<int> numberList)
+        private static string GetNumberString(string input)
         {
-            var negativeNumbers = numberList.Where(x => x < 0).ToList();
-
-            if(negativeNumbers.Any())
-                throw new Exception($"Negatives not allowed: {string.Join(",", negativeNumbers)}");
+            return input.StartsWith("//") ? input.Split('\n')[1] : input;
         }
 
-        private static string GetNumberString(string numberString)
+        private string[] GetDelimiters(string input)
         {
-            if (numberString.StartsWith("//"))
-                return numberString.Split('\n')[1];
-
-            return numberString;
+            return input.StartsWith("//") ? 
+                GetCustomDelimiters(input) : 
+                new[] { ",", "\n" };
         }
 
-        private string[] GetDelimiters(string numberString)
+        private static string[] GetCustomDelimiters(string input)
         {
-            var defaultDelimiters = new[] { ",", "\n" };
-            var delimiters = defaultDelimiters;
-
-            if (numberString.StartsWith("//"))
-            {
-                var delimiterSection = numberString.Substring(2).Split('\n')[0];
-                delimiterSection = delimiterSection.Replace("[", "");
-                delimiters = delimiterSection.Split(']');
-            }
-
-            return delimiters;
+            var delimiterSection = input.Substring(2).Split('\n')[0].Replace("[", "").Replace(']', ',');
+            return delimiterSection.Split(',');
         }
     }
 }
